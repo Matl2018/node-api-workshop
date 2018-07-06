@@ -3,7 +3,7 @@ const parser = require("body-parser");
 const app = express();
 app.use(parser.json());
 
-const albumsData = [
+let albumsData = [
   {
     albumId: "10",
     artistName: "Beyoncé",
@@ -38,6 +38,9 @@ app.get("/album/:albumId", function(req, res) {
 app.get("/", function(req, res) {
   res.send("Hello Code yr Future");
 });
+app.get("/me", (req, res) => {
+  res.send("Just my name");
+});
 app.get("/students", function(req, res) {
   res.send("There is about 12 of us today! ");
 });
@@ -45,7 +48,25 @@ app.post("/postAlbum", function(req, res) {
   albumsData.push(req.body);
   res.send(albumsData);
 });
+app.delete("/album/:albumId", (req, res) => {
+  albumsData = albumsData.filter(album => album.albumId !== req.params.albumId);
+  res.send(albumsData);
+});
+app.delete("/album2/:albumId", (req, res) => {
+  let albumIdData = albumsData.map(album => album.albumId);
+  let albumIndex = albumIdData.indexOf(req.params.albumId);
+  albumsData.splice(albumIndex, 1);
+  res.send(albumsData);
+});
 
-app.listen(3000, function() {
-  console.log("Server listening on port 3000!");
+app.put("/album/:albumId", (req, res) => {
+  let albumToUpdate = albumsData.find(
+    album => album.albumId === req.params.albumId
+  );
+  albumToUpdate.collectionName = req.body.collectionName;
+  albumToUpdate.primaryGenreName = req.body.primaryGenreName;
+  res.send(albumToUpdate);
+});
+app.listen(3000, () => {
+  console.log("Server listening on port 3000! ready for requests ");
 });
